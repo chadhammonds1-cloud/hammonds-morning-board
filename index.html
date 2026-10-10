@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<!--
+  morning-dashboard-template.html
+  Reusable shell for Chad Hammonds' dark morning briefing.
+  Public board: https://chadhammonds1-cloud.github.io/hammonds-morning-board/ (GitHub Pages,
+  published by .github/workflows/publish-board.yml on push to main; Netlify is no longer used).
+  Inject daily content at every DATA marker below (search for "DATA:").
+  Do NOT invent Jesus Calling devotion text or fake calendar events.
+  Prefer system fonts; file:// / email attachment must work offline.
+-->
+
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>Morning Rundown · Oct 10, 2026</title>
+<!-- DATA: set <title> to Morning Rundown · MMM DD, YYYY -->
+<style>
+  :root {
+    --bg: #0E0E0E;
+    --card: #161616;
+    --card-elev: #1A1A1A;
+    --border: #2A2A2A;
+    --border-soft: #222222;
+    --orange: #E68A45;
+    --orange-dim: rgba(230, 138, 69, 0.18);
+    --orange-glow: rgba(230, 138, 69, 0.35);
+    --text: #FFFFFF;
+    --muted: #A0A0A0;
+    --muted2: #8A8A8A;
+    --muted3: #6B6B6B;
+    --success: #5CBF7A;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --radius: 12px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--bg);
+    background-image:
+      radial-gradient(circle, #2A2A2A 0.7px, transparent 0.7px);
+    background-size: 18px 18px;
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    padding:
+      calc(12px + var(--safe-top))
+      14px
+      calc(28px + var(--safe-bottom));
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+  }
+
+  .mono {
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+  }
+
+  .label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted2);
+  }
+
+  .label .slash { color: var(--orange); margin: 0 0.15em; }
+
+  /* —— Header —— */
+  .sys-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .sys-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 0 3px var(--orange-dim), 0 0 10px var(--orange-glow);
+    flex-shrink: 0;
+  }
+
+  .sys-date {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* —— Day row —— */
+  .day-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .day-name {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+    text-transform: uppercase;
+  }
+
+  .clock {
+    font-family: var(--mono);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--orange);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* —— Greeting —— */
+  .greeting {
+    margin: 4px 0 22px;
+  }
+
+  .greeting h1 {
+    font-size: clamp(2.15rem, 8vw, 2.85rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+  }
+
+  .greeting .name { color: var(--orange); }
+
+  /* —— Cards —— */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 15px;
+    margin-bottom: 12px;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .card-head .label { margin: 0; }
+
+  .icon-sq {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: var(--orange);
+    color: #111;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .icon-sq svg { width: 14px; height: 14px; display: block; }
+
+  /* —— Playback —— */
+  .playback {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .playback:hover { border-color: #3A3A3A; background: var(--card-elev); }
+  .playback:active { transform: scale(0.995); }
+
+  .play-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 9px;
+    background: var(--orange);
+    border: none;
+    color: #111;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 0 16px var(--orange-dim);
+  }
+  .play-btn svg { width: 16px; height: 16px; margin-left: 2px; }
+  .play-btn.speaking { background: #c97438; }
+
+  .playback-copy .title {
+    font-size: 0.95rem;
+    font-weight: 560;
+    color: var(--text);
+  }
+  .playback-copy .sub {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--muted2);
+    margin-top: 2px;
+    text-transform: uppercase;
+  }
+
+  /* —— Anchor —— */
+  .anchor-date {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--orange);
+    margin: 0 0 8px;
+  }
+
+  .anchor-body {
+    font-size: 1.05rem;
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--text);
+  }
+
+  .anchor-ref {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    color: var(--muted3);
+    margin-top: 10px;
+  }
+
+  /* —— Weather —— */
+  .wx-main {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    margin: 4px 0 14px;
+  }
+
+  .wx-temp {
+    font-size: clamp(2.6rem, 10vw, 3.4rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: var(--text);
+  }
+
+  .wx-cond {
+    font-size: 1rem;
+    color: var(--muted);
+    padding-bottom: 6px;
+  }
+
+  .wx-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .wx-stat {
+    background: #121212;
+    border: 1px solid var(--border-soft);
+    border-radius: 9px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .wx-stat .k {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    color: var(--muted2);
+    margin-bottom: 4px;
+  }
+
+  .wx-stat .v {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .wx-source {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.04em;
+    color: var(--muted3);
+    margin-top: 10px;
+  }
+
+  /* —— Schedule —— */
+  .sched-empty {
+    color: var(--muted);
+    font-size: 0.92rem;
+    margin: 2px 0 12px;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    background: #121212;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 7px 11px;
+  }
+
+  .chip strong {
+    color: var(--text);
+    font-weight: 560;
+  }
+
+  .chip .when { color: var(--orange); }
+
+  .count-badge {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--muted2);
+    background: #121212;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 8px;
+  }
+
+  /* —— Tasks —— */
+  .task-list { list-style: none; }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .task-item:last-child { border-bottom: none; padding-bottom: 2px; }
+  .task-item:first-child { padding-top: 2px; }
+
+  .task-item input {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    border: 1.5px solid #444;
+    border-radius: 5px;
+    background: #121212;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .task-item input:checked {
+    background: var(--orange);
+    border-color: var(--orange);
+  }
+
+  .task-item input:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid #111;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .task-item label {
+    font-size: 0.92rem;
+    color: var(--text);
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .task-item input:checked + label {
+    color: var(--muted2);
+    text-decoration: line-through;
+    text-decoration-color: #555;
+  }
+
+  /* —— Team pulse —— */
+  .team-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .team-row {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 9px 10px;
+    background: #121212;
+    border: 1px solid var(--border-soft);
+    border-radius: 9px;
+  }
+
+  .team-name {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--orange);
+    padding-top: 1px;
+  }
+
+  .team-status {
+    font-size: 0.84rem;
+    color: var(--muted);
+    line-height: 1.35;
+  }
+
+  /* —— Alert strip —— */
+  .alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: linear-gradient(180deg, rgba(230,138,69,0.12) 0%, rgba(22,22,22,0.95) 70%);
+    border: 1px solid rgba(230,138,69,0.35);
+    border-radius: var(--radius);
+    padding: 13px 14px;
+    margin-bottom: 12px;
+  }
+
+  .alert-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--orange);
+    margin-top: 6px;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--orange-glow);
+  }
+
+  .alert .k {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+    margin-bottom: 3px;
+  }
+
+  .alert .v {
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+
+  /* —— Note to self —— */
+  .note-area {
+    width: 100%;
+    min-height: 72px;
+    resize: vertical;
+    background: #121212;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    padding: 11px 12px;
+    outline: none;
+  }
+  .note-area::placeholder { color: var(--muted3); }
+  .note-area:focus { border-color: #3A3A3A; }
+
+  .note-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .note-confirm {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    color: var(--success);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .note-confirm.show { opacity: 1; }
+
+  .btn-tx {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #111;
+    background: var(--orange);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .btn-tx:active { transform: scale(0.98); }
+
+  /* —— Layout columns —— */
+  .stack { display: flex; flex-direction: column; }
+  .col-a, .col-b { display: flex; flex-direction: column; }
+
+  .chev {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+    color: var(--muted3);
+  }
+  .chev svg { width: 22px; height: 22px; opacity: 0.55; }
+
+  .footer-meta {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+    color: var(--muted3);
+    margin-top: 10px;
+  }
+
+  /* Landscape / wide: two columns */
+  @media (orientation: landscape) and (min-width: 900px), (min-width: 900px) {
+    body { padding-left: 24px; padding-right: 24px; }
+    .wrap { max-width: 980px; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .span-full { grid-column: 1 / -1; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (min-width: 1100px) {
+    .team-grid { grid-template-columns: 1fr 1fr 1fr; }
+  }
+</style>
+<style id="jc-css">
+  /* Full Jesus Calling entry (anchor module) */
+  .anchor-body p { margin: 0 0 0.75em; }
+  .anchor-body p:last-child { margin-bottom: 0; }
+  .anchor-scripture { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-soft, #222); }
+  .anchor-verse { margin: 0 0 12px; }
+  .anchor-verse:last-child { margin-bottom: 0; }
+  .anchor-verse blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--orange, #E68A45);
+    font-size: 0.95rem; line-height: 1.45; color: #D8D8D8; }
+  .anchor-verse figcaption { font-family: var(--mono, monospace); font-size: 0.62rem; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--orange, #E68A45); margin: 5px 0 0 12px; }
+</style>
+<!-- DECK:CSS START · card-deck shell (layout only, do not edit or remove; source deck/deck.css) -->
+<style id="deck-css">
+/* Morning Rundown card-deck shell (presentation only).
+   Active only when deck.js adds html.deck-on; without JS the original stacked board shows. */
+.voice-note {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: var(--muted3);
+  margin-top: 6px;
+  line-height: 1.35;
+}
+
+html.deck-on { font-size: 22px; scroll-behavior: auto; }
+html.deck-on, html.deck-on body { height: 100%; overflow: hidden; }
+html.deck-on body { padding: 0; min-height: 0; }
+html.deck-on .wrap { max-width: none; margin: 0; height: 100%; }
+
+.deck {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  scroll-behavior: auto;
+}
+.deck::-webkit-scrollbar { display: none; }
+
+.deck-card {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  padding:
+    calc(58px + var(--safe-top))
+    40px
+    calc(78px + var(--safe-bottom))
+    16px;
+}
+
+.deck-inner {
+  width: 100%;
+  max-width: 780px;
+  max-height: 100%;
+  margin: auto;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3a transparent;
+}
+
+/* Section cards fill the slide */
+.deck-inner > .card,
+.deck-inner > .alert {
+  margin: 0;
+  padding: 22px 20px 24px;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+}
+
+.deck-card .card-head { margin-bottom: 18px; gap: 10px 12px; flex-wrap: wrap; }
+.deck-card .card-head .count-badge { white-space: nowrap; }
+.deck-card .card-head .label { white-space: normal; }
+.deck-card .label { font-size: 0.74rem; letter-spacing: 0.1em; color: #B8B8B8; }
+.deck-card .icon-sq { width: 38px; height: 38px; border-radius: 9px; }
+.deck-card .icon-sq svg { width: 19px; height: 19px; }
+.deck-card .count-badge { font-size: 0.66rem; padding: 4px 10px; }
+.deck-part {
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  color: var(--orange);
+  border: 1px solid rgba(230,138,69,0.45);
+  border-radius: 999px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+.card-head .count-badge + .deck-part { margin-left: 0; }
+.card-head > .deck-part:not(.after-badge) { margin-left: auto; }
+
+/* Internally scrolling cards (content taller than the screen) */
+.deck-card.is-scroll .deck-inner {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scroll-behavior: smooth;
+  -webkit-mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 64px), transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0, #000 calc(100% - 64px), transparent 100%);
+}
+.deck-card.is-scroll.at-end .deck-inner { -webkit-mask-image: none; mask-image: none; }
+.deck-card.is-scroll .deck-inner > .card { box-shadow: none; }
+.deck-more {
+  position: absolute;
+  left: 50%;
+  bottom: calc(80px + var(--safe-bottom));
+  transform: translateX(-50%);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  color: var(--orange);
+  background: rgba(14,14,14,0.9);
+  border: 1px solid rgba(230,138,69,0.45);
+  border-radius: 999px;
+  padding: 5px 12px;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  display: none;
+}
+.deck-card.is-scroll .deck-more { display: block; }
+.deck-card.is-scroll.at-end .deck-more { opacity: 0; }
+.deck-more span { display: inline-block; animation: deck-bob 1.6s ease-in-out infinite; }
+
+/* Team Pulse view toggle */
+.pulse-mode-btn {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  background: #121212;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 7px 11px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pulse-mode-btn b { color: var(--orange); font-weight: 600; }
+.card-head > .deck-part ~ .pulse-mode-btn { margin-left: 0; }
+html:not(.deck-on) .pulse-mode-btn { display: none; }
+
+/* (A) one card: auto-fit everyone on one screen */
+.deck-card.pulse-one .team-grid { gap: calc(9px * var(--fit, 1)); }
+.deck-card.pulse-one .team-row { display: block; padding: calc(11px * var(--fit, 1)) 12px; font-size: calc(0.92rem * var(--fit, 1)); line-height: 1.36; }
+.deck-card.pulse-one .team-name { display: inline; font-size: 0.76em; margin-right: 0.45em; line-height: 1; }
+.deck-card.pulse-one .team-status { display: inline; font-size: 1em; line-height: inherit; }
+/* (B) split: one teammate per card, big */
+.deck-card.pulse-split .team-grid { grid-template-columns: 1fr; }
+.deck-card.pulse-split .team-row { padding: 22px 20px; gap: 12px; }
+.deck-card.pulse-split .team-name { font-size: 0.95rem; }
+.deck-card.pulse-split .team-status { font-size: 1.3rem; line-height: 1.42; color: #EEE; }
+/* (C) scroll: one long card, full-length large text, scrolls inside */
+.deck-card.pulse-scroll .team-grid { grid-template-columns: 1fr; gap: 12px; }
+.deck-card.pulse-scroll .team-row { padding: 18px 16px; gap: 8px; }
+.deck-card.pulse-scroll .team-name { font-size: 0.8rem; }
+.deck-card.pulse-scroll .team-status { font-size: 1.1rem; line-height: 1.45; color: #E6E6E6; }
+.deck-card.pulse-scroll .deck-inner { padding-bottom: 8px; }
+
+/* Anchor / Jesus Calling: font sizes set by auto-fit in deck.js (min 17px); extra room */
+.deck-card.deck-anchor { padding-left: 10px; padding-right: 34px; }
+.deck-anchor .deck-inner > .card { padding: 16px 16px 18px; }
+.deck-anchor .card-head { margin-bottom: 10px; }
+.deck-anchor .icon-sq { width: 30px; height: 30px; }
+.deck-anchor .anchor-date { margin-bottom: 8px; }
+.deck-anchor .anchor-body { line-height: 1.32; font-weight: 500; }
+.deck-anchor .anchor-body p { margin: 0 0 0.6em; }
+.deck-anchor .anchor-scripture { margin-top: 12px; padding-top: 10px; }
+.deck-anchor .anchor-verse { margin-bottom: 10px; }
+.deck-anchor .anchor-verse blockquote { line-height: 1.38; color: #DADADA; }
+.deck-anchor .anchor-ref { margin-top: 12px; line-height: 1.45; color: var(--muted2); }
+
+/* Live weather */
+.wx-live-on > .wx-main, .wx-live-on > .wx-stats { display: none; }
+.deck-card .wx-live .wx-now { display: flex; align-items: center; gap: 16px; margin: 2px 0 16px; }
+.deck-card .wx-live .wx-temp { font-size: clamp(3.6rem, 20vw, 5.2rem); }
+.deck-card .wx-live .wx-nowtxt .c { font-size: 1.15rem; color: var(--text); font-weight: 560; line-height: 1.2; }
+.deck-card .wx-live .wx-nowtxt .f { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.06em; color: var(--muted); margin-top: 6px; }
+.deck-card .wx-live .wx-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.deck-card .wx-live .wx-stat { background: #121212; border: 1px solid var(--border-soft); border-radius: 10px; padding: 10px 6px; text-align: center; }
+.deck-card .wx-live .wx-stat .k { font-family: var(--mono); font-size: 0.52rem; letter-spacing: 0.1em; color: var(--muted2); margin-bottom: 4px; }
+.deck-card .wx-live .wx-stat .v { font-size: 1.1rem; font-weight: 600; white-space: nowrap; }
+.deck-card .wx-live .wx-stat .v small { font-size: 0.55em; color: var(--muted); font-weight: 500; }
+.deck-card .wx-live .wx-sun { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 10px; margin: 14px 2px 12px; font-size: 0.74rem; color: var(--muted); }
+.deck-card .wx-live .wx-sun span { white-space: nowrap; }
+.deck-card .wx-live .wx-sun b { color: var(--text); font-weight: 600; }
+.deck-card .wx-live .wx-hours { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; overscroll-behavior-x: contain; }
+.deck-card .wx-live .wx-hours::-webkit-scrollbar { display: none; }
+.wxh { flex: 0 0 auto; min-width: 54px; text-align: center; background: #121212; border: 1px solid var(--border-soft); border-radius: 10px; padding: 8px 4px; }
+.wxh .t { font-family: var(--mono); font-size: 0.5rem; color: var(--muted2); letter-spacing: 0.06em; }
+.wxh .v { font-size: 0.9rem; font-weight: 600; margin: 3px 0 1px; }
+.wxh .p { font-family: var(--mono); font-size: 0.5rem; color: #7FB3E0; }
+.wx-livesrc { font-family: var(--mono); font-size: 0.5rem; letter-spacing: 0.04em; color: var(--muted3); margin-top: 10px; }
+.wx-live-on .wx-source { font-size: 0.66rem !important; margin-top: 8px !important; }
+.wx-days { display: flex; flex-direction: column; }
+.wxd { display: grid; grid-template-columns: 3.4em 1fr auto 4.6em; align-items: baseline; gap: 8px; padding: 13px 2px; border-bottom: 1px solid var(--border-soft); font-size: 0.95rem; }
+.wxd:last-child { border-bottom: 0; }
+.wxd .d { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; color: var(--orange); text-transform: uppercase; }
+.wxd .c { color: #D6D6D6; }
+.wxd .p { font-family: var(--mono); font-size: 0.62rem; color: #7FB3E0; }
+.wxd .hl { text-align: right; color: var(--muted); white-space: nowrap; }
+.wxd .hl b { color: var(--text); }
+
+/* Intro card */
+.deck-intro .deck-inner { display: flex; flex-direction: column; }
+.deck-intro .sys-bar { margin-bottom: 30px; flex-wrap: wrap; }
+.deck-intro .sys-bar .label, .deck-intro .sys-date { font-size: 13px; white-space: nowrap; }
+.deck-intro .day-row { flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 18px; }
+.deck-intro .day-name { font-size: 0.95rem; }
+.deck-intro .clock { font-size: clamp(2.8rem, 15vw, 4.6rem); line-height: 1; letter-spacing: 0.02em; text-shadow: 0 0 28px var(--orange-dim); }
+.deck-intro .greeting h1 { font-size: clamp(2.6rem, 13vw, 4.2rem); }
+.deck-intro .chev { margin-top: 30px; flex-direction: column; align-items: center; gap: 4px; }
+.deck-intro .chev svg { width: 30px; height: 30px; opacity: 0.8; animation: deck-bob 1.8s ease-in-out infinite; }
+.deck-intro .chev::after { content: "SWIPE UP"; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em; color: var(--muted2); }
+@keyframes deck-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+/* Playback */
+.deck-card .playback { gap: 18px; padding: 26px 22px; }
+.deck-card .play-btn { width: 76px; height: 76px; border-radius: 16px; }
+.deck-card .play-btn svg { width: 30px; height: 30px; }
+.deck-card .playback-copy .title { font-size: 1.35rem; line-height: 1.2; }
+.deck-card .playback-copy .sub { font-size: 0.66rem; margin-top: 6px; }
+.deck-card .voice-note { font-size: 0.66rem; color: var(--muted2); margin-top: 12px; }
+
+/* Anchor */
+.deck-card .anchor-date { font-size: 0.8rem; margin-bottom: 14px; }
+.deck-card .anchor-body { font-size: 1.45rem; line-height: 1.3; font-weight: 560; }
+.deck-card .anchor-ref { font-size: 0.74rem; color: var(--muted); margin-top: 20px; line-height: 1.6; }
+
+/* Weather */
+.deck-card .wx-main { flex-wrap: wrap; gap: 6px 16px; margin: 6px 0 22px; }
+.deck-card .wx-temp { font-size: clamp(4.2rem, 24vw, 6rem); }
+.deck-card .wx-cond { font-size: 1.15rem; color: #D0D0D0; }
+.deck-card .wx-stats { gap: 10px; }
+.deck-card .wx-stat { padding: 14px 8px; }
+.deck-card .wx-stat .k { font-size: 0.6rem; }
+.deck-card .wx-stat .v { font-size: 1.3rem; }
+.deck-card .wx-source { font-size: 0.8rem; color: var(--muted); margin-top: 18px; line-height: 1.45; font-family: var(--sans); letter-spacing: 0; }
+
+/* Schedule */
+.deck-card .sched-empty { font-size: 0.95rem; color: #C8C8C8; margin-bottom: 16px; }
+.deck-card .chip-row { flex-direction: column; flex-wrap: nowrap; gap: 10px; }
+.deck-card .chip {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  letter-spacing: 0;
+  line-height: 1.35;
+  color: #C8C8C8;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.deck-card .chip strong { color: var(--text); font-weight: 600; }
+.deck-card .chip .when { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; }
+
+/* Tasks */
+.deck-card .task-item { gap: 14px; padding: 15px 0; }
+.deck-card .task-item input { width: 28px; height: 28px; border-radius: 7px; margin-top: 1px; border-width: 2px; }
+.deck-card .task-item input:checked::after { left: 8px; top: 3px; width: 7px; height: 14px; border-width: 0 3px 3px 0; }
+.deck-card .task-item label { font-size: 1rem; line-height: 1.38; }
+
+/* Team pulse / inbox rows */
+.deck-card .team-grid { gap: 10px; grid-template-columns: 1fr; }
+.deck-card .team-row { grid-template-columns: 1fr; gap: 6px; padding: 13px 14px; border-radius: 12px; }
+.deck-card .team-name { font-size: 0.72rem; }
+.deck-card .team-status { font-size: 0.92rem; color: #D6D6D6; line-height: 1.4; }
+
+/* Top action */
+.deck-inner > .alert { gap: 16px; padding: 26px 22px; }
+.deck-card .alert-dot { width: 12px; height: 12px; margin-top: 8px; }
+.deck-card .alert .k { font-size: 0.74rem; margin-bottom: 12px; }
+.deck-card .alert .v { font-size: 1.2rem; line-height: 1.42; }
+
+/* Note to self */
+.deck-card .note-area { font-size: 0.95rem; min-height: 180px; padding: 14px; border-radius: 12px; }
+.deck-card .note-confirm { font-size: 0.66rem; }
+.deck-card .btn-tx { font-size: 0.72rem; padding: 14px 18px; border-radius: 10px; }
+.deck-card .footer-meta { font-size: 0.56rem; margin-top: 22px; line-height: 1.6; }
+
+/* —— HUD: fixed header with live clock + position —— */
+.deck-hud {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: calc(10px + var(--safe-top)) 16px 10px;
+  background: linear-gradient(180deg, rgba(14,14,14,0.96) 0%, rgba(14,14,14,0.85) 70%, rgba(14,14,14,0) 100%);
+  font-family: var(--mono);
+  pointer-events: none;
+}
+.deck-hud .hud-left, .deck-hud .hud-right { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.deck-hud .hud-clock { font-size: 17px; font-weight: 600; color: var(--orange); letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+.deck-hud .hud-day { font-size: 12px; letter-spacing: 0.12em; color: var(--muted2); text-transform: uppercase; white-space: nowrap; }
+.deck-hud .hud-label { font-size: 12px; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100vw - 215px); }
+.deck-hud .hud-label .slash { color: var(--orange); }
+.deck-hud .hud-count { font-size: 13px; color: var(--text); letter-spacing: 0.06em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.deck-hud .hud-count b { color: var(--orange); font-weight: 600; }
+
+/* —— Progress bar (auto mode) —— */
+.deck-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  z-index: 30;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.deck-progress.on { opacity: 1; }
+.deck-progress i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange-glow);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+/* —— Dot rail —— */
+.deck-rail {
+  position: fixed;
+  right: calc(6px + env(safe-area-inset-right, 0px));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.deck-rail button {
+  width: 26px;
+  height: 22px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.deck-rail button::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4A4A4A;
+  transition: width 0.18s, height 0.18s, background 0.18s;
+}
+.deck-rail button:hover::before { background: #8A8A8A; }
+.deck-rail button.on::before {
+  width: 13px;
+  height: 13px;
+  background: var(--orange);
+  box-shadow: 0 0 0 3px var(--orange-dim), 0 0 10px var(--orange-glow);
+}
+.deck-rail.tight button { height: 16px; }
+
+/* —— Auto-mode controls —— */
+.deck-ctrl {
+  position: fixed;
+  /* bottom-LEFT: Netlify injects a "Powered by Netlify" badge iframe (#nl-badge-frame, ~192x64)
+     at bottom-right with max z-index; it covered the play button there. */
+  left: calc(12px + env(safe-area-inset-left, 0px));
+  bottom: calc(14px + var(--safe-bottom));
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(22,22,22,0.92);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+}
+.deck-ctrl button {
+  height: 44px;
+  min-width: 44px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  -webkit-tap-highlight-color: transparent;
+}
+.deck-ctrl button svg { width: 18px; height: 18px; display: block; }
+.deck-ctrl .deck-play { background: var(--orange); color: #111; width: 44px; padding: 0; }
+.deck-ctrl .deck-play.on { background: #c97438; }
+.deck-ctrl .deck-loop.on { color: var(--orange); }
+.deck-ctrl .deck-loop:not(.on) { opacity: 0.55; }
+.deck-ctrl button:focus-visible, .deck-rail button:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+/* Desktop: same deck, centered cards */
+@media (min-width: 900px) {
+  html.deck-on { font-size: 21px; }
+  .deck-card { padding-left: 32px; padding-right: 64px; }
+  .deck-hud { padding-left: 28px; padding-right: 28px; }
+  .deck-hud .hud-clock { font-size: 20px; }
+  .deck-hud .hud-label { max-width: none; font-size: 14px; }
+  .deck-hud .hud-count { font-size: 15px; }
+  .deck-rail { right: 18px; }
+  .deck-ctrl { left: 24px; bottom: 22px; }
+  .deck-card .team-grid { grid-template-columns: 1fr 1fr; }
+  .deck-card.pulse-split .team-grid, .deck-card.pulse-scroll .team-grid { grid-template-columns: 1fr; }
+}
+@media (max-height: 560px) {
+  html.deck-on { font-size: 18px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html, .deck, html.deck-on { scroll-behavior: auto !important; }
+  .deck-intro .chev svg, .deck-more span { animation: none; }
+  .deck-card.is-scroll .deck-inner { scroll-behavior: auto; }
+  .deck-rail button::before, .deck-progress { transition: none; }
+}
+</style>
+<!-- DECK:CSS END -->
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- SYS BAR -->
+    <header class="sys-bar">
+      <div class="sys-left">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="label">SYS <span class="slash">//</span> ONLINE</span>
+      </div>
+      <!-- DATA: DATE_LABEL e.g. SUN, OCT 4, 2026 -->
+      <div class="sys-date" id="dateLabel">SAT, OCT 10, 2026</div>
+    </header>
+
+    <!-- DAY + CLOCK -->
+    <div class="day-row">
+      <!-- DATA: DAY_NAME e.g. // SUNDAY -->
+      <div class="day-name" id="dayLabel">// SATURDAY</div>
+      <div class="clock" id="clock" aria-live="polite">--:--:--</div>
+    </div>
+
+    <!-- GREETING -->
+    <section class="greeting">
+      <!-- DATA: GREETING_NAME (default Chad.) — greetWord is JS/hour-driven -->
+      <h1><span id="greetWord">Morning</span>, <span class="name">Chad.</span></h1>
+    </section>
+
+    <div class="grid-2">
+
+      <!-- PLAYBACK -->
+      <div class="card playback span-full" id="playbackCard" role="button" tabindex="0" aria-label="Read briefing aloud">
+        <button class="play-btn" id="playBtn" type="button" aria-label="Play">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="playback-copy">
+          <div class="label" style="margin-bottom:4px">// PLAYBACK</div>
+          <div class="title">Read Briefing Aloud</div>
+          <div class="sub" id="playState">Tap to synthesize</div>
+          <div class="voice-note">Voice memo from Charlize is in your Grok Bot chat each morning.</div>
+        </div>
+      </div>
+
+      <!-- ANCHOR -->
+      <div class="card span-full anchor-card">
+        <div class="card-head">
+          <span class="icon-sq" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M8 8c2.5-2 5.5-2 8 0M8 16c2.5 2 5.5 2 8 0"/></svg>
+          </span>
+          <span class="label">ANCHOR <span class="slash">//</span> JESUS CALLING</span>
+        </div>
+        <!-- JC:START · DATA: ANCHOR = full Jesus Calling entry for the day from Chad's own copy (generated by tools/jesus_calling.py; do not hand-edit) -->
+        <div class="anchor-date">OCT 10</div>
+        <div class="anchor-body">
+          <p>TRUST ME ENOUGH to let things happen without striving to predict or control them. Relax, and refresh yourself in the Light of My everlasting Love. My Love-Light never dims, yet you are often unaware of My radiant Presence. When you project yourself into the future, rehearsing what you will do or say, you are seeking to be self-sufficient: to be adequate without My help. This is a subtle sin—so common that it usually slips by unnoticed.</p>
+          <p>The alternative is to live fully in the present, depending on Me each moment. Rather than fearing your inadequacy, rejoice in My abundant supply. Train your mind to seek My help continually, even when you feel competent to handle something by yourself. Don’t divide your life into things you can do by yourself and things that require My help. Instead, learn to rely on Me in every situation. This discipline will enable you to enjoy life more and to face each day confidently.</p>
+        </div>
+        <div class="anchor-scripture">
+          <figure class="anchor-verse"><blockquote>Trust in the LORD and do good;<br>dwell in the land and enjoy safe pasture.<br>Delight yourself in the LORD<br>and he will give you the desires of your heart.<br>Commit your way to the LORD;<br>trust in him and he will do this:<br>He will make your righteousness shine like the dawn,<br>the justice of your cause like the noonday sun.</blockquote><figcaption>Psalm 37:3–6</figcaption></figure>
+          <figure class="anchor-verse"><blockquote>And my God shall supply all your needs according to His riches in glory by Christ Jesus.</blockquote><figcaption>Philippians 4:19 NKJV</figcaption></figure>
+        </div>
+        <div class="anchor-ref">Psalm 37:3–6 · Philippians 4:19 NKJV · Scripture as printed in Chad's Jesus Calling copy</div>
+        <!-- JC:END -->
+      </div>
+
+      <!-- WEATHER -->
+      <div class="card">
+        <div class="card-head">
+          <span class="label">WEATHER <span class="slash">//</span> HENDERSONVILLE LIVE</span>
+        </div>
+        <!-- DATA: WEATHER — TEMP, CONDITION, HIGH, LOW, RAIN, SOURCE -->
+        <div class="wx-main">
+          <div class="wx-temp">64°</div>
+          <div class="wx-cond">Overcast · rain coming</div>
+        </div>
+        <div class="wx-stats">
+          <div class="wx-stat"><div class="k">HIGH</div><div class="v">71°</div></div>
+          <div class="wx-stat"><div class="k">LOW</div><div class="v">59°</div></div>
+          <div class="wx-stat"><div class="k">RAIN</div><div class="v">90%</div></div>
+        </div>
+        <div class="wx-source">Hendersonville TN · showers before 10 AM, then showers and thunderstorms, high near 71°, gusts to 40 mph, ½–¾" of rain possible · tonight rain showers (~80%), low ~59° · Sun chance of showers before noon (~50%), high ~74° · Mon dry and warm, mid 80s · Open-Meteo + NWS</div>
+      </div>
+      <!-- SCHEDULE -->
+      <div class="card">
+        <div class="card-head">
+          <span class="label">SCHEDULE <span class="slash">//</span> TODAY</span>
+          <span class="count-badge">0 TODAY</span>
+        </div>
+        <p class="sched-empty">No calendar events today. Coming up:</p>
+        <div class="chip-row">
+          <span class="chip"><span class="when">TODAY</span> · <strong>Rain + storms</strong> · ~90%, gusts to 40 mph, high ~71°</span>
+          <span class="chip"><span class="when">SUN OCT 11 10:30 AM</span> · <strong>Priest Lake</strong> · pink Sunday (black, white &amp; pink) · showers possible before noon (~50%)</span>
+          <span class="chip"><span class="when">OCT 12–16</span> · <strong>Fall Break</strong> · no school all week</span>
+          <span class="chip"><span class="when">MON OCT 12 7 PM</span> · <strong>Monday Reflections</strong> · Microsoft Teams</span>
+          <span class="chip"><span class="when">THU OCT 15 6:30–8:30 PM</span> · <strong>Rehearsal</strong> · Priest Lake</span>
+          <span class="chip"><span class="when">SUN OCT 18 10:30 AM</span> · <strong>Priest Lake</strong> · service</span>
+          <span class="chip"><span class="when">MON OCT 19</span> · <strong>Back to school</strong> · Q2 begins · Monday Reflections 7 PM</span>
+          <span class="chip"><span class="when">THU OCT 22</span> · <strong>Report cards</strong></span>
+        </div>
+      </div>
+      <!-- TASKS -->
+      <div class="card">
+        <div class="card-head">
+          <span class="label">TASKS <span class="slash">//</span> PENDING</span>
+          <span class="count-badge" id="taskCount">9</span>
+        </div>
+        <ul class="task-list" id="taskList">
+          <li class="task-item">
+            <input type="checkbox" id="t0" data-task="t0" />
+            <label for="t0">Fall Break Mon Oct 12–Fri Oct 16 · line up plans for Grant &amp; Dawson · back Mon Oct 19 · report cards Thu Oct 22</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t1" data-task="t1" />
+            <label for="t1">Sunday Oct 11 · 10:30 at Priest Lake · wear pink (black, white &amp; pink) for Breast Cancer Awareness Sunday</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t2" data-task="t2" />
+            <label for="t2">Confirm Thursday night’s Google account recovery and new Mac sign-in (~11:20 PM) were you · if not, secure the account now</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t3" data-task="t3" />
+            <label for="t3">xAI ticket T-G93842 · they’re already tracking the canvas-delete bug · optional: reply with screenshots after a delete and which devices you used</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t4" data-task="t4" />
+            <label for="t4">Tell Harper how the headache is this morning and whether the jog is okay on the ankle</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t5" data-task="t5" />
+            <label for="t5">Logic Pro for iPad renews soon at $49/year · keep it or cancel before it renews</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t6" data-task="t6" />
+            <label for="t6">Google Flow: opt in at flow.google.com to keep creations made before May 19 (they start expiring Nov 20)</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t7" data-task="t7" />
+            <label for="t7">Watch INV-007 ($1,150) · due around Oct 16</label>
+          </li>
+          <li class="task-item">
+            <input type="checkbox" id="t8" data-task="t8" />
+            <label for="t8">Schedule Telluride 8,000-mile maintenance with Kia</label>
+          </li>
+        </ul>
+      </div>
+      <!-- TEAM PULSE -->
+      <div class="card span-full">
+        <div class="card-head">
+          <span class="label">TEAM <span class="slash">//</span> PULSE</span>
+        </div>
+        <div class="team-grid">
+          <div class="team-row"><div class="team-name">Esther</div><div class="team-status">Nothing new since yesterday. No Jesus Calling request or journal handoff came in, and the BibleMemory mirror is still at 93 verses. Team-pulse JSON saving is now part of my morning status. · today: I'm ready with today's Jesus Calling if Chad asks, a BibleMemory recite prompt, or biblical notes on any journal Eliza hands over. · long-term: Confirm the Sep 27 devotion ("Today If You Hear His Voice") is in Chad's Notion Devotionals, and draft it there if it isn't. · no blockers</div></div>
+          <div class="team-row"><div class="team-name">Eliza</div><div class="team-status">The Oct 9 Notability pull ran at about 2:40 PM CT and found 0 new journals, so there was nothing to tag. I saved Chad's fall-movie call notes (relayed by Riot) to EJR staging as EJR-Staging_2026-10-9.md. I also set two EJR reminders: Monday 7:55 AM CT to start the new weekly scaffolding doc, and Wednesday 7:55 AM CT for a midweek glance. · today: The 2:30 PM CT Notability pull, with same-day tagging if anything gets archived. · long-term: Keep the journal archive and retrieval stack current, and distill each week's scaffolding into the actual EJR. From here on, I'll put 1 to 3 EJR reminders for the morning brief on this line after each weekly distill. · no blockers</div></div>
+          <div class="team-row"><div class="team-name">Janine</div><div class="team-status">I logged three Cap One alerts (Cash App $25 and $30, Subway $17.63), triaged your xAI ticket T-G93842 (nothing needed from you), and moved the MNPS check to 8:19 AM. · today: Keep logging your bank alerts and school theater and sports emails. · long-term: Flag INV-007 ($1,150) if no payment shows up by its ~Oct 16 due date. · no blockers</div></div>
+          <div class="team-row"><div class="team-name">Harper</div><div class="team-status">Around midnight Chad had a headache and took ibuprofen. He asked me the adult dose of the children's diphenhydramine liquid (12.5 mg per 5 mL), and I told him 10 to 20 mL, starting at 10. I also said it's fine to take with ibuprofen. I still don't have a workout log since Tuesday. · today: Light day. He has South Nashville this morning, so an easy walk and some stretching is enough. Ragweed is forecast high today, so walk early or indoors and drink plenty of water. Same allergen-safe protein and supplements. · long-term: A steady weekday 1-mile jog plus 1-mile walk, with strength working toward 20 pull-ups, 40 push-ups, and 25 weighted squats. · blockers: How's the headache this morning, and has the jog been going okay on the ankle?</div></div>
+          <div class="team-row"><div class="team-name">Kimora</div><div class="team-status">Friday's choir reminder went out with the Sunday attire note but landed at 1:10 PM, two minutes late, even after the move to 12:56. · today: Pink Sunday is tomorrow, Oct 11 (black, white, and pink), and the swatch is ready. · long-term: Dates Sung in the choir catalog still needs a real setlist. · no blockers</div></div>
+          <div class="team-row"><div class="team-name">Cindy</div><div class="team-status">Weekday AI/news digest lands 7:49 AM · ASAP checks 10:59 / 1:59 / 4:59</div></div>
+        </div>
+      </div>
+      <!-- INBOX -->
+      <div class="card span-full">
+        <div class="card-head">
+          <span class="label">INBOX <span class="slash">//</span> WORTH A LOOK</span>
+          <span class="count-badge">8</span>
+        </div>
+        <div class="team-grid">
+          <div class="team-row"><div class="team-name">xAI</div><div class="team-status">Ticket T-G93842 · support says the team is already tracking the canvas-delete bug and a teammate will follow up · screenshots after a delete plus which devices would help</div></div>
+          <div class="team-row"><div class="team-name">Google</div><div class="team-status">Thursday night’s account recovery and new Mac sign-in · nothing to do if that was you</div></div>
+          <div class="team-row"><div class="team-name">Google One</div><div class="team-status">A getting-started guide for the Gemini app in Google AI Pro came in last night</div></div>
+          <div class="team-row"><div class="team-name">MNPS Honor Choir</div><div class="team-status">Mr. Jacobs posted part recordings and song videos in Schoology for Paragon/Chamber and Mustang/Men’s choirs</div></div>
+          <div class="team-row"><div class="team-name">Creswell Middle</div><div class="team-status">Friday digest: MLK Magnet High School Preview Day post for 8th grade</div></div>
+          <div class="team-row"><div class="team-name">Capital One</div><div class="team-status">Fri: Cash App $25 and $30, Subway $17.63 · Janine logged them</div></div>
+          <div class="team-row"><div class="team-name">Apple</div><div class="team-status">Logic Pro for iPad (family, $49/year) renews soon</div></div>
+          <div class="team-row"><div class="team-name">TLDR</div><div class="team-status">GPT-6.1 Ultrafast, a Gemini universal agent, and SpaceX buying ~$8B of cellular spectrum from Grain Management</div></div>
+        </div>
+      </div>
+      <!-- TOP ACTION -->
+      <div class="alert span-full" role="status">
+        <span class="alert-dot" aria-hidden="true"></span>
+        <div>
+          <div class="k">TOP ACTION <span style="opacity:.6">//</span> ALERT</div>
+          <!-- DATA: TOP_ACTION alert line -->
+          <div class="v">Rainy Saturday: showers, then storms most of the day (~90%), gusts to 40 · pink Sunday tomorrow at 10:30, Priest Lake · Fall Break Oct 12–16, back Mon Oct 19, report cards Thu Oct 22 · confirm Thursday night’s Google recovery was you · 64° and overcast now, high 71°.</div>
+        </div>
+      </div>
+      <!-- NOTE TO SELF -->
+      <div class="card span-full">
+        <div class="card-head">
+          <span class="label">INPUT <span class="slash">//</span> NOTE TO SELF</span>
+        </div>
+        <textarea class="note-area" id="noteInput" placeholder="// transmit thought" rows="3"></textarea>
+        <div class="note-row">
+          <span class="note-confirm" id="noteConfirm">SAVED LOCALLY</span>
+          <button type="button" class="btn-tx" id="noteTx">Transmit →</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="chev" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="footer-meta"><!-- DATA: FOOTER_META -->MORNING RUNDOWN · HAMMONDS · SATURDAY, OCTOBER 10, 2026 · AMERICA/CHICAGO</div>
+
+  </div>
+
+<script>
+(function () {
+  var TZ = "America/Chicago";
+  /* DATA: bump storage keys per day so tasks/notes do not bleed across dates */
+  var TASK_KEY = "mr-2026-10-10-tasks";
+  var NOTE_KEY = "mr-2026-10-10-note";
+  var speaking = false;
+
+  function chicagoParts(d) {
+    var fmt = new Intl.DateTimeFormat("en-US", {
+      timeZone: TZ,
+      weekday: "long",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      hourCycle: "h23"
+    });
+    var parts = {};
+    fmt.formatToParts(d).forEach(function (p) {
+      if (p.type !== "literal") parts[p.type] = p.value;
+    });
+    // Some engines use hourCycle quirks for 24h midnight
+    var h = parseInt(parts.hour, 10);
+    if (isNaN(h)) h = 0;
+    return {
+      weekday: parts.weekday || "Saturday",
+      hour: h,
+      minute: parts.minute || "00",
+      second: parts.second || "00"
+    };
+  }
+
+  function pad2(n) {
+    n = String(n);
+    return n.length < 2 ? "0" + n : n;
+  }
+
+  function tick() {
+    var p = chicagoParts(new Date());
+    var el = document.getElementById("clock");
+    if (el) el.textContent = pad2(p.hour) + ":" + p.minute + ":" + p.second;
+
+    var greet = "Morning";
+    if (p.hour >= 17) greet = "Evening";
+    else if (p.hour >= 12) greet = "Afternoon";
+    var gw = document.getElementById("greetWord");
+    if (gw) gw.textContent = greet;
+  }
+
+  // —— Tasks ——
+  function loadTasks() {
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(TASK_KEY) || "{}"); } catch (e) {}
+    ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"].forEach(function (id) {
+      var box = document.getElementById(id);
+      if (box) box.checked = !!saved[id];
+    });
+    updateTaskCount();
+  }
+
+  function saveTasks() {
+    var saved = {};
+    ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"].forEach(function (id) {
+      var box = document.getElementById(id);
+      saved[id] = !!(box && box.checked);
+    });
+    try { localStorage.setItem(TASK_KEY, JSON.stringify(saved)); } catch (e) {}
+    updateTaskCount();
+  }
+
+  function updateTaskCount() {
+    var pending = 0;
+    ["t0", "t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"].forEach(function (id) {
+      var box = document.getElementById(id);
+      if (box && !box.checked) pending++;
+    });
+    var badge = document.getElementById("taskCount");
+    if (badge) badge.textContent = String(pending);
+  }
+
+  document.getElementById("taskList").addEventListener("change", saveTasks);
+
+  // —— Note ——
+  function loadNote() {
+    try {
+      var n = localStorage.getItem(NOTE_KEY);
+      if (n) document.getElementById("noteInput").value = n;
+    } catch (e) {}
+  }
+
+  document.getElementById("noteTx").addEventListener("click", function () {
+    var v = document.getElementById("noteInput").value;
+    try { localStorage.setItem(NOTE_KEY, v); } catch (e) {}
+    var c = document.getElementById("noteConfirm");
+    c.classList.add("show");
+    setTimeout(function () { c.classList.remove("show"); }, 1600);
+  });
+
+  // —— Speech ——
+  /* DATA: BRIEFING_SCRIPT — keep concise: weather, top action, calendar, top 3 goals, optional anchor */
+  function briefingScript() {
+    var p = chicagoParts(new Date());
+    var greet = "Morning";
+    if (p.hour >= 17) greet = "Evening";
+    else if (p.hour >= 12) greet = "Afternoon";
+    return [
+      greet + " Chad.",
+      "Hendersonville weather: overcast and about 64 degrees right now. Showers this morning, then showers and thunderstorms through the day, about a 90 percent chance, with gusts up to 40 and a high near 71. Rain continues tonight with a low around 59. Sunday has a chance of showers before noon, high near 74.",
+      "Top action: it is a rainy Saturday, so plan indoor time for the kids. Tomorrow is pink Sunday at Priest Lake at 10:30, so wear black, white, and pink.",
+      "Fall Break runs Monday the 12th through Friday the 16th. School is back Monday the 19th, and report cards come Thursday the 22nd.",
+      "Nothing is on your calendar today. After Sunday service, Monday Reflections is at 7 on Teams, rehearsal is Thursday at 6:30, and service again on the 18th.",
+      "Security check: if Thursday night's Google account recovery and new Mac sign-in were you, you are fine. If not, secure the account right away.",
+      "Worth a look: x A I support gave you ticket T-G93842 and says the team is already tracking the canvas delete bug. Screenshots after a delete would help. Mr. Jacobs posted MNPS Honor Choir rehearsal tracks in Schoology, and Logic Pro for iPad renews soon at 49 dollars a year.",
+      "Still open: Harper wants to know how the headache is and whether the jog is okay on the ankle. Google Flow creations from before May 19th start expiring November 20th unless you opt in. INV-007 is due around October 16th, and the Telluride is due for its 8,000 mile service.",
+      "Team pulse: updates came in from Esther, Eliza, Janine, Harper and Kimora. Harper is waiting on you; details are on the Team Pulse cards.",
+      "Anchor: Trust in the Lord and do good; dwell in the land and enjoy safe pasture. Psalm 37, verse 3."
+    ].join(" ");
+  }
+
+  function setPlayUI(on) {
+    speaking = on;
+    var btn = document.getElementById("playBtn");
+    var st = document.getElementById("playState");
+    if (btn) btn.classList.toggle("speaking", on);
+    if (st) st.textContent = on ? "Speaking…" : "Tap to synthesize";
+    if (btn) {
+      btn.innerHTML = on
+        ? '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="4" height="12"/><rect x="14" y="6" width="4" height="12"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+    }
+  }
+
+  function toggleSpeech() {
+    if (!window.speechSynthesis) {
+      document.getElementById("playState").textContent = "Speech unavailable";
+      return;
+    }
+    if (speaking) {
+      window.speechSynthesis.cancel();
+      setPlayUI(false);
+      return;
+    }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(briefingScript());
+    u.rate = 1.02;
+    u.pitch = 1;
+    u.onend = function () { setPlayUI(false); };
+    u.onerror = function () { setPlayUI(false); };
+    setPlayUI(true);
+    window.speechSynthesis.speak(u);
+  }
+
+  var card = document.getElementById("playbackCard");
+  card.addEventListener("click", toggleSpeech);
+  card.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleSpeech(); }
+  });
+
+  loadTasks();
+  loadNote();
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+<!-- DECK:JS START · card-deck shell (layout only, do not edit or remove; source deck/deck.js) -->
+<script id="deck-js">
+/* Morning Rundown card-deck shell (presentation only).
+   Auto-detects sections: the intro (everything in .wrap before .grid-2) is card 1,
+   then every element child of .grid-2 (or any [data-deck-card]) becomes its own
+   full-viewport card. Long list cards (chips / tasks / team rows) are split into
+   continuation cards ("2/3"). Content is moved, never rewritten. */
+(function () {
+  "use strict";
+  var wrap = document.querySelector(".wrap");
+  if (!wrap || !window.requestAnimationFrame || !document.querySelector) return;
+
+  var LS = { auto: "mrDeck.auto", speed: "mrDeck.speed", loop: "mrDeck.loop", pulse: "mrDeck.pulse" };
+  var PULSE_MODES = ["one", "split", "scroll"];
+  var PULSE_NAMES = { one: "ONE CARD", split: "SPLIT", scroll: "SCROLL" };
+  var SPEEDS = [6, 10, 15];
+  var DEFAULT_SPEED = 10;
+  var VOICE_NOTE = "Voice memo from Charlize is in your Grok Bot chat each morning.";
+  var reduceMQ = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  function reduced() { return !!(reduceMQ && reduceMQ.matches); }
+  function lsGet(k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function el(tag, cls, html) { var n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
+
+  /* Voice-memo line under the read-aloud button (kept even if a rebuild drops it). */
+  var pbCopy = document.querySelector("#playbackCard .playback-copy");
+  if (pbCopy && !document.querySelector(".voice-note")) {
+    pbCopy.appendChild(el("div", "voice-note", VOICE_NOTE));
+  }
+
+  /* Team Pulse view: ?pulse=one|split|scroll overrides; on-board toggle cycles + remembers */
+  var qp = (location.search.match(/[?&]pulse=(one|split|scroll)\b/) || [])[1];
+  var PULSE_DEFAULT = "split"; /* approved by Chad 2026-10-07 */
+  var pulseMode = qp || lsGet(LS.pulse, PULSE_DEFAULT);
+  if (PULSE_MODES.indexOf(pulseMode) === -1) pulseMode = PULSE_DEFAULT;
+
+  /* —— 1. Collect sections —— */
+  var grid = wrap.querySelector(".grid-2");
+  var sections = [];
+  var intro = [];
+  var tail = [];
+  var explicit = wrap.querySelectorAll("[data-deck-card]");
+  if (explicit.length) {
+    Array.prototype.forEach.call(explicit, function (n) { sections.push(n); });
+  } else if (grid) {
+    Array.prototype.forEach.call(grid.children, function (n) {
+      if (n.nodeType === 1 && n.tagName !== "SCRIPT" && n.tagName !== "STYLE") sections.push(n);
+    });
+  } else {
+    Array.prototype.forEach.call(wrap.querySelectorAll(".card, .alert"), function (n) { sections.push(n); });
+  }
+  if (!sections.length) return;
+  /* Top action / alert reads first, right after the intro+clock card */
+  (function () {
+    for (var i = 0; i < sections.length; i++) {
+      var n = sections[i];
+      var k = n.querySelector(".k, .label");
+      if (n.classList.contains("alert") || (k && /TOP\s*ACTION/i.test(k.textContent))) {
+        sections.splice(i, 1);
+        sections.unshift(n);
+        break;
+      }
+    }
+  })();
+  var gridSeen = false;
+  Array.prototype.forEach.call(wrap.children, function (n) {
+    if (n === grid || sections.indexOf(n) !== -1) { gridSeen = true; return; }
+    if (n.nodeType !== 1 || n.tagName === "SCRIPT" || n.tagName === "STYLE") return;
+    if (!gridSeen) intro.push(n);
+    else if (!n.classList.contains("chev")) tail.push(n);
+    else intro.push(n); /* swipe hint lives on the intro card */
+  });
+
+  function labelFor(node) {
+    var lab = node.querySelector(".card-head .label, .alert .k, .label, .k");
+    var t = lab ? lab.textContent : (node.getAttribute("data-deck-label") || "");
+    t = t.replace(/\s+/g, " ").replace(/^\s*\/\/\s*/, "").trim();
+    return t || "SECTION";
+  }
+
+  /* —— 2. Build deck DOM —— */
+  document.documentElement.classList.add("deck-on");
+  var deck = el("main", "deck");
+  deck.id = "deck";
+  deck.setAttribute("aria-label", "Morning rundown cards");
+  var cards = []; /* {sec, inner, label, base, part} */
+
+  function makeCard(label, extraCls) {
+    var sec = el("section", "deck-card" + (extraCls ? " " + extraCls : ""));
+    sec.setAttribute("aria-label", label);
+    var inner = el("div", "deck-inner");
+    sec.appendChild(inner);
+    return { sec: sec, inner: inner, label: label };
+  }
+
+  if (intro.length) {
+    var dn = document.getElementById("dayLabel");
+    var c0 = makeCard(dn ? dn.textContent.replace(/^\s*\/\/\s*/, "").trim() || "BRIEF" : "BRIEF", "deck-intro");
+    c0.label = "BRIEF // " + c0.label;
+    intro.forEach(function (n) { c0.inner.appendChild(n); });
+    c0.base = true;
+    cards.push(c0);
+  }
+  sections.forEach(function (n) {
+    var c = makeCard(labelFor(n));
+    c.inner.appendChild(n);
+    c.base = true;
+    c.node = n;
+    cards.push(c);
+  });
+  if (tail.length) tail.forEach(function (n) { cards[cards.length - 1].inner.appendChild(n); });
+  cards.forEach(function (c) {
+    c.baseLabel = c.label;
+    if (!isPulse(c)) return;
+    var hd = c.node.querySelector(".card-head");
+    if (!hd || hd.querySelector(".pulse-mode-btn")) return;
+    var b = el("button", "pulse-mode-btn");
+    b.type = "button";
+    hd.appendChild(b);
+  });
+  function renderPulseBtns() {
+    Array.prototype.forEach.call(document.querySelectorAll(".pulse-mode-btn"), function (b) {
+      b.innerHTML = "<b>" + PULSE_NAMES[pulseMode] + "</b> ⟳";
+      b.setAttribute("aria-label", "Team Pulse view: " + PULSE_NAMES[pulseMode] + ". Tap to switch (one card, split, scroll).");
+    });
+  }
+  cards.forEach(function (c) { deck.appendChild(c.sec); });
+  wrap.appendChild(deck);
+  if (grid && !grid.children.length) grid.style.display = "none";
+
+  /* —— 3. Split long list cards into continuation cards —— */
+  var LIST_SEL = ".chip-row, .task-list, .team-grid";
+
+  function overflows(inner) { return inner.scrollHeight > inner.clientHeight + 2; }
+
+  var MODE_CLS = ["deck-pulse", "pulse-one", "pulse-split", "pulse-scroll", "is-scroll", "at-end", "at-top"];
+  function unsplit() {
+    /* forward order so continuation items return in their original sequence */
+    var keep = [];
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      MODE_CLS.forEach(function (k) { c.sec.classList.remove(k); });
+      c.sec.style.removeProperty("--fit");
+      if (c.node) Array.prototype.forEach.call(c.node.querySelectorAll(".anchor-body, .anchor-ref, .anchor-date, .anchor-verse blockquote, .anchor-verse figcaption"), function (x) { x.style.fontSize = ""; });
+      if (c.base) {
+        var tag = c.node && c.node.querySelector(".deck-part");
+        if (tag) tag.parentNode.removeChild(tag);
+        c.label = c.baseLabel || c.label;
+        keep.push(c);
+        continue;
+      }
+      while (c.list.firstChild) c.home.appendChild(c.list.firstChild);
+      c.sec.parentNode.removeChild(c.sec);
+    }
+    cards = keep;
+  }
+
+  /* Anchor / Jesus Calling: largest text that shows the whole devotional + scripture on one
+     screen; never below 17px. If it still can't fit at 17px the card scrolls inside. */
+  function fitAnchor(c) {
+    var body = c.node.querySelector(".anchor-body");
+    var verses = c.node.querySelectorAll(".anchor-verse blockquote");
+    var small = c.node.querySelectorAll(".anchor-date, .anchor-ref, .anchor-verse figcaption");
+    var lo = 17, hi = Math.min(64, Math.round(window.innerWidth / 6.5)), best = lo;
+    function set(px) {
+      body.style.fontSize = px + "px";
+      Array.prototype.forEach.call(verses, function (v) { v.style.fontSize = Math.max(17, Math.round(px * 0.92)) + "px"; });
+      Array.prototype.forEach.call(small, function (v) { v.style.fontSize = Math.max(13, Math.round(px * 0.6)) + "px"; });
+    }
+    c.sec.classList.add("deck-anchor");
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1;
+      set(mid);
+      if (overflows(c.inner)) hi = mid - 1; else { best = mid; lo = mid + 1; }
+    }
+    set(best);
+  }
+
+  function isPulse(c) {
+    return !!(c.node && c.node.querySelector(".team-grid") && /PULSE/i.test(c.baseLabel || c.label));
+  }
+  function fit(c) {
+    var f = 1;
+    c.sec.style.setProperty("--fit", "1");
+    while (overflows(c.inner) && f > 0.62) {
+      f -= 0.03;
+      c.sec.style.setProperty("--fit", f.toFixed(2));
+    }
+  }
+
+  function split() {
+    for (var i = 0; i < cards.length; i++) {
+      var c = cards[i];
+      if (!c.base || !c.node) continue;
+      c.baseLabel = c.baseLabel || c.label;
+      if (c.node.querySelector(".anchor-body")) { fitAnchor(c); continue; }
+      if (c.node.querySelector(".wx-main, .wx-week")) continue;
+      var list = c.node.querySelector(LIST_SEL);
+      var perItem = false;
+      if (isPulse(c)) {
+        c.sec.classList.add("deck-pulse", "pulse-" + pulseMode);
+        if (pulseMode === "one") { fit(c); continue; }
+        if (pulseMode === "scroll") continue;
+        perItem = true;
+      }
+      if (!list || (!perItem && !overflows(c.inner))) continue;
+      var parts = [c];
+      var cur = c, curList = list;
+      var guard = 0;
+      function needMore(cc, l) { return l.children.length > 1 && (perItem || overflows(cc.inner)); }
+      while (needMore(cur, curList) && guard++ < 60) {
+        var moved = [];
+        while (needMore(cur, curList)) {
+          moved.unshift(curList.lastElementChild);
+          curList.removeChild(curList.lastElementChild);
+        }
+        if (!moved.length) break;
+        var nx = makeCard(c.baseLabel, "deck-cont" + (perItem ? " deck-pulse pulse-split" : ""));
+        var shell = el(c.node.tagName.toLowerCase(), c.node.className.replace(/\bplayback\b/, ""));
+        var head = c.node.querySelector(".card-head");
+        if (head) {
+          var h = head.cloneNode(true);
+          Array.prototype.forEach.call(h.querySelectorAll("[id], .count-badge"), function (x) {
+            if (x.classList.contains("count-badge")) x.parentNode.removeChild(x); else x.removeAttribute("id");
+          });
+          shell.appendChild(h);
+        }
+        var nl = el(list.tagName.toLowerCase(), list.className);
+        moved.forEach(function (m) { nl.appendChild(m); });
+        nl._deckHome = list;
+        nl.addEventListener("change", function () {
+          /* keep the original list's delegated handlers (task save/count) working */
+          this._deckHome.dispatchEvent(new Event("change", { bubbles: true }));
+        });
+        shell.appendChild(nl);
+        nx.inner.appendChild(shell);
+        nx.base = false; nx.home = list; nx.list = nl; nx.node = shell;
+        cur.sec.parentNode.insertBefore(nx.sec, cur.sec.nextSibling);
+        parts.push(nx);
+        cur = nx; curList = nl;
+      }
+      if (parts.length > 1) {
+        parts.forEach(function (p, k) {
+          var tagText = (k + 1) + "/" + parts.length;
+          p.label = c.baseLabel + " " + tagText;
+          if (perItem) {
+            var nm = p.node.querySelector(".team-name");
+            if (nm) p.label = c.baseLabel + " · " + nm.textContent.trim() + " " + tagText;
+          }
+          var hd = p.node.querySelector(".card-head");
+          if (hd) {
+            var t = el("span", "deck-part", tagText);
+            if (hd.querySelector(".count-badge")) t.className += " after-badge";
+            hd.insertBefore(t, hd.querySelector(".pulse-mode-btn"));
+          }
+        });
+        cards.splice.apply(cards, [i + 1, 0].concat(parts.slice(1)));
+        i += parts.length - 1;
+      }
+    }
+  }
+
+  /* Cards whose content is taller than the screen scroll internally (with a fade + MORE hint). */
+  function refreshScrollState() {
+    cards.forEach(function (c) {
+      var sc = overflows(c.inner);
+      c.sec.classList.toggle("is-scroll", sc);
+      if (sc && !c.sec.querySelector(".deck-more")) {
+        var m = el("div", "deck-more", "MORE <span aria-hidden=\"true\">↓</span>");
+        m.setAttribute("aria-hidden", "true");
+        c.sec.appendChild(m);
+      }
+      edgeState(c.inner);
+    });
+  }
+  function edgeState(inner) {
+    var sec = inner.parentNode;
+    sec.classList.toggle("at-end", inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 4);
+    sec.classList.toggle("at-top", inner.scrollTop <= 2);
+  }
+  var innerScrollAt = 0;
+  deck.addEventListener("scroll", function (e) {
+    var t = e.target;
+    if (t && t.classList && t.classList.contains("deck-inner")) { innerScrollAt = Date.now(); edgeState(t); }
+  }, true);
+
+  /* —— 4. HUD, rail, progress, controls —— */
+  var hud = el("div", "deck-hud");
+  hud.innerHTML =
+    '<div class="hud-left"><span class="status-dot" aria-hidden="true"></span>' +
+    '<span class="hud-clock" aria-hidden="true">--:--:--</span></div>' +
+    '<div class="hud-right"><span class="hud-label"></span><span class="hud-count" aria-live="polite"></span></div>';
+  var hudClock = hud.querySelector(".hud-clock");
+  var hudLabel = hud.querySelector(".hud-label");
+  var hudCount = hud.querySelector(".hud-count");
+  var dayEl = document.getElementById("dayLabel");
+  var clockEl = document.getElementById("clock");
+  function syncClock() { if (clockEl) hudClock.textContent = clockEl.textContent; }
+  syncClock();
+  setInterval(syncClock, 500);
+
+  var prog = el("div", "deck-progress", "<i></i>");
+  var progBar = prog.firstChild;
+  var rail = el("nav", "deck-rail");
+  rail.setAttribute("aria-label", "Cards");
+
+  var ICON_PLAY = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+  var ICON_PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
+  var ICON_LOOP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>';
+  var ctrl = el("div", "deck-ctrl");
+  ctrl.innerHTML =
+    '<button type="button" class="deck-loop" aria-label="Loop back to first card"></button>' +
+    '<button type="button" class="deck-speed" aria-label="Auto-advance speed"></button>' +
+    '<button type="button" class="deck-play" aria-label="Start auto-advance"></button>';
+  var btnPlay = ctrl.querySelector(".deck-play");
+  var btnSpeed = ctrl.querySelector(".deck-speed");
+  var btnLoop = ctrl.querySelector(".deck-loop");
+  btnLoop.innerHTML = ICON_LOOP;
+
+  document.body.appendChild(prog);
+  document.body.appendChild(hud);
+  document.body.appendChild(rail);
+  document.body.appendChild(ctrl);
+
+  deck.addEventListener("click", function (e) {
+    var b = e.target.closest ? e.target.closest(".pulse-mode-btn") : null;
+    if (!b) return;
+    e.preventDefault();
+    e.stopPropagation();
+    pulseMode = PULSE_MODES[(PULSE_MODES.indexOf(pulseMode) + 1) % PULSE_MODES.length];
+    lsSet(LS.pulse, pulseMode);
+    try {
+      var u = new URL(location.href);
+      u.searchParams.set("pulse", pulseMode);
+      history.replaceState(null, "", u.toString());
+    } catch (err) {}
+    var first = null;
+    cards.forEach(function (c) { if (!first && isPulse(c)) first = c; });
+    layout(first && first.sec);
+  });
+
+  /* —— 5. Navigation —— */
+  var idx = 0;
+  function cardTop(i) { return cards[i] ? cards[i].sec.offsetTop : 0; }
+  function currentIndex() {
+    var y = deck.scrollTop + deck.clientHeight / 2, best = 0;
+    for (var i = 0; i < cards.length; i++) if (cards[i].sec.offsetTop <= y) best = i;
+    return best;
+  }
+  function go(i, instant) {
+    i = Math.max(0, Math.min(cards.length - 1, i));
+    deck.scrollTo({ top: cardTop(i), behavior: (instant || reduced()) ? "instant" : "smooth" });
+    setActive(i);
+  }
+  function renderRail() {
+    rail.innerHTML = "";
+    rail.classList.toggle("tight", cards.length > 18);
+    cards.forEach(function (c, i) {
+      var b = el("button");
+      b.type = "button";
+      b.setAttribute("aria-label", "Card " + (i + 1) + ": " + c.label);
+      b.title = c.label;
+      b.addEventListener("click", function () { userAct(); go(i); });
+      rail.appendChild(b);
+    });
+  }
+  function shortLabel(l) {
+    if (l.length <= 18) return l;
+    var m = l.match(/^(.*?)((?:\s·\s\S+)?(?:\s\d+\/\d+)?)$/);
+    var segs = m[1].split(/\s*\/\/\s*/);
+    var head = /^(INPUT|SYS|TEAM)$/i.test(segs[0]) && segs[1] ? segs[1] : segs[0];
+    return head + m[2];
+  }
+  function setActive(i) {
+    if (i !== idx) { idx = i; restartTimer(); }
+    var bs = rail.children;
+    for (var k = 0; k < bs.length; k++) {
+      bs[k].classList.toggle("on", k === idx);
+      if (k === idx) bs[k].setAttribute("aria-current", "true"); else bs[k].removeAttribute("aria-current");
+    }
+    hudCount.innerHTML = "<b>" + (idx + 1) + "</b> / " + cards.length;
+    var lab = cards[idx] ? shortLabel(cards[idx].label) : "";
+    hudLabel.innerHTML = lab.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/\s*\/\/\s*/g, ' <span class="slash">//</span> ');
+  }
+  var scrollRaf = 0;
+  deck.addEventListener("scroll", function () {
+    if (scrollRaf) return;
+    scrollRaf = requestAnimationFrame(function () { scrollRaf = 0; var i = currentIndex(); if (i !== idx) setActive(i); });
+  }, { passive: true });
+
+  function layout(target) {
+    var keep = target || (cards[idx] && cards[idx].sec);
+    unsplit();
+    split();
+    renderRail();
+    renderPulseBtns();
+    var ni = Math.max(0, cards.map(function (c) { return c.sec; }).indexOf(keep));
+    idx = -1; setActive(ni);
+    deck.scrollTo({ top: cardTop(ni), behavior: "instant" });
+    refreshScrollState();
+  }
+
+  /* Keyboard */
+  function isTyping(t) {
+    if (!t || !t.tagName) return false;
+    var tn = t.tagName;
+    return tn === "TEXTAREA" || tn === "INPUT" || tn === "SELECT" || t.isContentEditable;
+  }
+  document.addEventListener("keydown", function (e) {
+    if (isTyping(e.target) || e.altKey || e.ctrlKey || e.metaKey) return;
+    var k = e.key, d = 0;
+    if (k === "ArrowDown" || k === "PageDown" || k === "ArrowRight" || k === "j") d = 1;
+    else if (k === "ArrowUp" || k === "PageUp" || k === "ArrowLeft" || k === "k") d = -1;
+    else if (k === "Home") { e.preventDefault(); userAct(); go(0); return; }
+    else if (k === "End") { e.preventDefault(); userAct(); go(cards.length - 1); return; }
+    if (ctrl.contains(e.target) && (k === "Enter" || k === " ")) return;
+    if (!d) { if (k !== "Shift" && k !== "Tab") userAct(); return; }
+    e.preventDefault();
+    userAct();
+    go(currentIndex() + d);
+  });
+
+  /* Mouse wheel: one notch / gesture = one card, unless the card itself scrolls */
+  var wheelLock = 0, wheelAcc = 0, lastWheel = 0;
+  function innerCanScroll(t, dy) {
+    var n = t && t.closest ? t.closest(".deck-inner, .note-area") : null;
+    if (!n) return false;
+    if (n.scrollHeight <= n.clientHeight + 2) return false;
+    return dy > 0 ? n.scrollTop + n.clientHeight < n.scrollHeight - 2 : n.scrollTop > 0;
+  }
+  var innerGesture = false;
+  deck.addEventListener("wheel", function (e) {
+    userAct();
+    var dy = e.deltaY * (e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? deck.clientHeight : 1);
+    var now = Date.now();
+    if (now - lastWheel > 220) { wheelAcc = 0; innerGesture = false; }
+    lastWheel = now;
+    if (innerCanScroll(e.target, dy)) { innerGesture = true; return; }
+    e.preventDefault();
+    /* reached the end of an inner scroll: wait for a fresh wheel gesture before changing card */
+    if (innerGesture || now - innerScrollAt < 120) { innerGesture = true; return; }
+    if (now < wheelLock) { wheelLock = Math.max(wheelLock, now + 160); return; }
+    wheelAcc += dy;
+    if (Math.abs(wheelAcc) >= 30) {
+      go(currentIndex() + (wheelAcc > 0 ? 1 : -1));
+      wheelAcc = 0;
+      wheelLock = now + 650;
+    }
+  }, { passive: false });
+
+  /* Touch inside an internally scrolling card: the inner scroll is contained (no snap
+     while reading). Once it is at the bottom (or top), a fresh swipe moves cards. */
+  var tY = null, tInner = null, tAtEnd = false, tAtTop = false;
+  deck.addEventListener("touchstart", function (e) {
+    var inner = e.target.closest ? e.target.closest(".is-scroll .deck-inner") : null;
+    tInner = inner;
+    if (!inner || e.touches.length !== 1) { tY = null; return; }
+    tY = e.touches[0].clientY;
+    tAtEnd = inner.scrollTop + inner.clientHeight >= inner.scrollHeight - 4;
+    tAtTop = inner.scrollTop <= 2;
+  }, { passive: true });
+  deck.addEventListener("touchend", function (e) {
+    if (tY === null || !tInner || !e.changedTouches.length) return;
+    var dy = tY - e.changedTouches[0].clientY;
+    tY = null;
+    if (e.target.closest && e.target.closest("textarea, input")) return;
+    if (dy > 50 && tAtEnd) go(currentIndex() + 1);
+    else if (dy < -50 && tAtTop) go(currentIndex() - 1);
+  }, { passive: true });
+
+  /* —— 6. Auto mode —— */
+  var auto = lsGet(LS.auto, "0") === "1";
+  var speed = parseInt(lsGet(LS.speed, String(DEFAULT_SPEED)), 10);
+  if (SPEEDS.indexOf(speed) === -1) speed = DEFAULT_SPEED;
+  var loop = lsGet(LS.loop, "0") === "1";
+  var tStart = 0, rafId = 0;
+
+  function renderCtrl() {
+    btnPlay.innerHTML = auto ? ICON_PAUSE : ICON_PLAY;
+    btnPlay.classList.toggle("on", auto);
+    btnPlay.setAttribute("aria-pressed", auto ? "true" : "false");
+    btnPlay.setAttribute("aria-label", auto ? "Pause auto-advance" : "Start auto-advance");
+    btnSpeed.textContent = speed + "s";
+    btnSpeed.title = "Seconds per card (tap to change: 6 / 10 / 15)";
+    btnLoop.classList.toggle("on", loop);
+    btnLoop.setAttribute("aria-pressed", loop ? "true" : "false");
+    btnLoop.title = loop ? "Loop: on (wraps to first card)" : "Loop: off (stops at last card)";
+    prog.classList.toggle("on", auto);
+  }
+  var autoStep = -1;
+  function restartTimer() { tStart = performance.now(); autoStep = -1; progBar.style.transform = "scaleX(0)"; }
+  function pagesOf(c) {
+    if (!c || !c.sec.classList.contains("is-scroll")) return 1;
+    var inner = c.inner, step = inner.clientHeight * 0.8;
+    return 1 + Math.ceil((inner.scrollHeight - inner.clientHeight) / step);
+  }
+  function frame(now) {
+    if (!auto) { rafId = 0; return; }
+    var c = cards[currentIndex()];
+    var pages = pagesOf(c); /* long scrolling cards get speed × pages and page through */
+    var el2 = now - tStart;
+    var p = Math.min(1, el2 / (speed * 1000 * pages));
+    progBar.style.transform = "scaleX(" + p.toFixed(4) + ")";
+    if (pages > 1) {
+      var st = Math.min(pages - 1, Math.floor(el2 / (speed * 1000)));
+      if (st !== autoStep) {
+        autoStep = st;
+        c.inner.scrollTo({ top: st * c.inner.clientHeight * 0.8, behavior: reduced() ? "instant" : "smooth" });
+      }
+    }
+    if (p >= 1) {
+      var i = currentIndex();
+      if (i >= cards.length - 1) {
+        if (loop) go(0); else { setAuto(false); return; }
+      } else go(i + 1);
+      restartTimer();
+    }
+    rafId = requestAnimationFrame(frame);
+  }
+  function setAuto(on) {
+    auto = !!on;
+    lsSet(LS.auto, auto ? "1" : "0");
+    renderCtrl();
+    if (auto) {
+      if (currentIndex() >= cards.length - 1 && !loop) go(0, true);
+      restartTimer();
+      if (!rafId) rafId = requestAnimationFrame(frame);
+    } else {
+      progBar.style.transform = "scaleX(0)";
+    }
+  }
+  function userAct() { if (auto) setAuto(false); }
+
+  btnPlay.addEventListener("click", function () { setAuto(!auto); });
+  btnSpeed.addEventListener("click", function () {
+    speed = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length];
+    lsSet(LS.speed, String(speed));
+    renderCtrl();
+    if (auto) restartTimer();
+  });
+  btnLoop.addEventListener("click", function () {
+    loop = !loop;
+    lsSet(LS.loop, loop ? "1" : "0");
+    renderCtrl();
+  });
+
+  /* Any touch / click / swipe on the deck pauses auto mode */
+  ["touchstart", "pointerdown"].forEach(function (ev) {
+    deck.addEventListener(ev, userAct, { passive: true });
+    rail.addEventListener(ev, userAct, { passive: true });
+  });
+
+  /* —— Live weather: Open-Meteo, Hendersonville TN 37075. Offline → board's own weather text stays. —— */
+  var WX = { lat: 36.3048, lon: -86.6200, place: "Hendersonville TN 37075" };
+  var WMO = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Fog", 48: "Freezing fog",
+    51: "Light drizzle", 53: "Drizzle", 55: "Heavy drizzle", 56: "Freezing drizzle", 57: "Freezing drizzle",
+    61: "Light rain", 63: "Rain", 65: "Heavy rain", 66: "Freezing rain", 67: "Freezing rain",
+    71: "Light snow", 73: "Snow", 75: "Heavy snow", 77: "Snow grains", 80: "Light showers", 81: "Showers",
+    82: "Heavy showers", 85: "Snow showers", 86: "Snow showers", 95: "Thunderstorms", 96: "T-storms, hail", 99: "T-storms, hail" };
+  function wmo(c) { return WMO[c] || "—"; }
+  function hm(iso) { var t = iso.split("T")[1] || ""; var h = parseInt(t, 10), m = t.slice(3, 5); return (h % 12 || 12) + ":" + m + (h < 12 ? " AM" : " PM"); }
+  function hr(iso) { var h = parseInt((iso.split("T")[1] || "0"), 10); return (h % 12 || 12) + (h < 12 ? "a" : "p"); }
+  function compass(d) { return ["N","NE","E","SE","S","SW","W","NW"][Math.round(((d % 360) + 360) % 360 / 45) % 8]; }
+  function dayName(iso, i) { if (i === 0) return "Today"; var d = new Date(iso + "T12:00:00"); return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()]; }
+  function r(x) { return Math.round(x); }
+  function liveWeather() {
+    var wxCard = null;
+    cards.forEach(function (c) { if (!wxCard && c.base && c.node && c.node.querySelector(".wx-main")) wxCard = c; });
+    if (!wxCard || !window.fetch) return;
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=" + WX.lat + "&longitude=" + WX.lon +
+      "&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index" +
+      "&hourly=temperature_2m,precipitation_probability,weather_code" +
+      "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max,wind_speed_10m_max" +
+      "&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago&forecast_days=7";
+    var ctl = window.AbortController ? new AbortController() : null;
+    var to = setTimeout(function () { if (ctl) ctl.abort(); }, 8000);
+    fetch(url, ctl ? { signal: ctl.signal } : {}).then(function (res) { if (!res.ok) throw 0; return res.json(); }).then(function (d) {
+      clearTimeout(to);
+      if (!d || !d.current || !d.daily || !d.hourly) return;
+      var cur = d.current, dy = d.daily, hy = d.hourly;
+      var node = wxCard.node;
+      /* live panel; the board's 5:53 snapshot (temp/high/low/rain) stays in the DOM for offline use */
+      node.classList.add("wx-live-on");
+      var nowIdx = 0, nowT = cur.time.slice(0, 13);
+      for (var i = 0; i < hy.time.length; i++) if (hy.time[i].slice(0, 13) === nowT) { nowIdx = i; break; }
+      var hours = "";
+      for (var j = nowIdx; j < Math.min(hy.time.length, nowIdx + 16); j++) {
+        hours += '<div class="wxh"><div class="t">' + (j === nowIdx ? "Now" : hr(hy.time[j])) + '</div><div class="v">' + r(hy.temperature_2m[j]) +
+          '°</div><div class="p">' + (hy.precipitation_probability[j] == null ? "–" : hy.precipitation_probability[j] + "%") + "</div></div>";
+      }
+      var live = el("div", "wx-live");
+      live.innerHTML =
+        '<div class="wx-now"><div class="wx-temp">' + r(cur.temperature_2m) + '°</div><div class="wx-nowtxt"><div class="c">' + wmo(cur.weather_code) +
+        '</div><div class="f">Feels ' + r(cur.apparent_temperature) + "° · H " + r(dy.temperature_2m_max[0]) + "° L " + r(dy.temperature_2m_min[0]) + "°</div></div></div>" +
+        '<div class="wx-grid">' +
+        '<div class="wx-stat"><div class="k">HIGH</div><div class="v">' + r(dy.temperature_2m_max[0]) + '°</div></div>' +
+        '<div class="wx-stat"><div class="k">LOW</div><div class="v">' + r(dy.temperature_2m_min[0]) + '°</div></div>' +
+        '<div class="wx-stat"><div class="k">RAIN</div><div class="v">' + (dy.precipitation_probability_max[0] == null ? "–" : dy.precipitation_probability_max[0] + "%") + '</div></div>' +
+        '<div class="wx-stat"><div class="k">WIND</div><div class="v">' + r(cur.wind_speed_10m) + '<small> mph ' + compass(cur.wind_direction_10m) + '</small></div></div>' +
+        '<div class="wx-stat"><div class="k">HUMIDITY</div><div class="v">' + r(cur.relative_humidity_2m) + '%</div></div>' +
+        '<div class="wx-stat"><div class="k">UV MAX</div><div class="v">' + (dy.uv_index_max[0] == null ? "–" : Math.round(dy.uv_index_max[0] * 10) / 10) + '</div></div>' +
+        "</div>" +
+        '<div class="wx-sun"><span>☀ Sunrise <b>' + hm(dy.sunrise[0]) + '</b></span><span>☾ Sunset <b>' + hm(dy.sunset[0]) + "</b></span></div>" +
+        '<div class="wx-hours" aria-label="Hourly forecast">' + hours + "</div>" +
+        '<div class="wx-livesrc">Live · Open-Meteo · ' + WX.place + " · updated " + hm(cur.time) + "</div>";
+      var head = node.querySelector(".card-head");
+      head.parentNode.insertBefore(live, head.nextSibling);
+      /* 7-day forecast gets its own card right after */
+      var week = el("div", "card wx-week");
+      var rows = "";
+      for (var k = 0; k < dy.time.length; k++) {
+        rows += '<div class="wxd"><div class="d">' + dayName(dy.time[k], k) + '</div><div class="c">' + wmo(dy.weather_code[k]) +
+          '</div><div class="p">' + (dy.precipitation_probability_max[k] == null ? "" : dy.precipitation_probability_max[k] + "%") +
+          '</div><div class="hl"><b>' + r(dy.temperature_2m_max[k]) + "°</b> " + r(dy.temperature_2m_min[k]) + "°</div></div>";
+      }
+      week.innerHTML = '<div class="card-head"><span class="label">WEATHER <span class="slash">//</span> 7-DAY</span></div><div class="wx-days">' + rows +
+        '</div><div class="wx-livesrc">' + WX.place + " · Open-Meteo · rain = max chance</div>";
+      var wc = makeCard("WEATHER // 7-DAY");
+      wc.inner.appendChild(week);
+      wc.base = true; wc.node = week; wc.baseLabel = wc.label;
+      wxCard.sec.parentNode.insertBefore(wc.sec, wxCard.sec.nextSibling);
+      cards.splice(cards.indexOf(wxCard) + 1, 0, wc);
+      layout();
+    }).catch(function () { clearTimeout(to); /* offline: keep board's own weather text */ });
+  }
+
+  /* —— 7. Go —— */
+  layout();
+  renderCtrl();
+  if (auto) setAuto(true);
+  liveWeather();
+  var rT = 0;
+  window.addEventListener("resize", function () { clearTimeout(rT); rT = setTimeout(layout, 180); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { layout(); });
+  window.__mrDeck = { cards: function () { return cards.map(function (c) { return c.label; }); }, go: go, setAuto: setAuto };
+})();
+</script>
+<!-- DECK:JS END -->
+</body>
+</html>
