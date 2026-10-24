@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta id="tc" name="theme-color" content="#1c1c1e">
+<script>try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Checklist">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>Daily Checklist</title>
+<style>
+:root{color-scheme:dark;--bg:#1c1c1e;--fg:#fff;--muted:#8e8e93;--meta:#a1a1a6;--line:#3a3a3c;--surface:#2c2c2e;--box:#c7c7cc;--btn:#3a3a3c;--chev:#636366;--over:#ff6961;--btnfg:#1c1c1e;--btnbg:#fff;--shadow:rgba(0,0,0,.5);
+ --c0:#64d2ff;--c1:#30d158;--c2:#bf5af2;--c3:#ffd60a;--c4:#ff9f0a;--c5:#ff6482;--c6:#63e6be;--c7:#a1a1a6}
+:root[data-theme=light]{color-scheme:light;--bg:#f7f7f8;--fg:#1c1c1e;--muted:#6e6e73;--meta:#6e6e73;--line:#d1d1d6;--surface:#fff;--box:#8e8e93;--btn:#e5e5ea;--chev:#aeaeb2;--over:#d70015;--btnfg:#fff;--btnbg:#1c1c1e;--shadow:rgba(0,0,0,.12);
+ --c0:#0071a4;--c1:#1e7a34;--c2:#8944ab;--c3:#946200;--c4:#c93400;--c5:#d30f45;--c6:#0a7570;--c7:#6e6e73}
+@media (prefers-color-scheme:light){:root:not([data-theme=dark]){color-scheme:light;--bg:#f7f7f8;--fg:#1c1c1e;--muted:#6e6e73;--meta:#6e6e73;--line:#d1d1d6;--surface:#fff;--box:#8e8e93;--btn:#e5e5ea;--chev:#aeaeb2;--over:#d70015;--btnfg:#fff;--btnbg:#1c1c1e;--shadow:rgba(0,0,0,.12);
+ --c0:#0071a4;--c1:#1e7a34;--c2:#8944ab;--c3:#946200;--c4:#c93400;--c5:#d30f45;--c6:#0a7570;--c7:#6e6e73}}
+body,#menu,#menubtn,#lock input,#lock button,.title,.sub,.label,.row,summary{transition:background-color .3s,color .3s,border-color .3s}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}70%{transform:scale(.92)}100%{transform:scale(1)}}
+li input.pop::before,li input.pop::after{animation:pop .32s ease-out}
+li.leaving{animation:leave .32s ease-in forwards}
+@keyframes leave{to{opacity:0;transform:translateY(10px)}}
+li.arrive{animation:arrive .3s ease-out}
+@keyframes arrive{from{opacity:0;transform:translateY(-6px)}}
+details[open] ul{animation:arrive .25s ease-out}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+#menu hr{border:0;border-top:1px solid var(--line);margin:6px 4px}
+#menu .lbl{font-size:12px;color:var(--muted);padding:4px 12px 2px}
+#menu button[aria-checked=true]::after{content:"✓";margin-left:auto;color:var(--fg)}
+
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.col{max-width:560px;margin:0 auto;padding:0 20px}
+header{padding:calc(18px + env(safe-area-inset-top)) 0 4px}
+.top{display:flex;align-items:center;justify-content:space-between}
+h1{margin:0;font-size:30px;font-weight:700;letter-spacing:-.4px}
+#menubtn{width:44px;height:44px;border-radius:50%;border:0;background:var(--btn);color:var(--fg);font-size:20px;line-height:1;letter-spacing:1px;cursor:pointer}
+.menuwrap{position:relative}
+#menu{position:absolute;right:0;top:50px;z-index:10;min-width:210px;background:var(--surface);border-radius:12px;padding:6px;box-shadow:0 8px 30px var(--shadow)}
+#menu button{display:flex;align-items:center;gap:12px;width:100%;min-height:44px;border:0;background:none;color:var(--fg);font:inherit;font-size:16px;text-align:left;padding:0 12px;border-radius:8px;cursor:pointer}
+#menu button:active{background:var(--btn)}
+#menu svg{width:20px;height:20px}
+.meta{color:var(--meta);font-size:14px;margin-top:6px}
+.bar{height:3px;background:var(--line);border-radius:2px;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;background:var(--meta);width:0}
+#example{display:inline-block;margin-top:10px;font-size:13px;font-weight:600;color:#1c1c1e;background:#ffd60a;border-radius:6px;padding:3px 8px}
+#msg{color:var(--c3);font-size:14px;margin-top:8px}
+main{padding-bottom:10px}
+.label{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;margin:28px 0 8px;scroll-margin-top:12px}
+.label::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.label small{margin-left:auto;color:var(--muted);font-weight:400;font-size:13px}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;gap:4px;align-items:flex-start;padding:4px 0}
+li input{appearance:none;-webkit-appearance:none;flex:0 0 44px;width:44px;height:44px;margin:-10px 0 0 -12px;background:none;border:0;cursor:pointer;position:relative}
+li input::before{content:"";position:absolute;left:12px;top:12px;width:18px;height:18px;border:1.5px solid var(--box);border-radius:4px}
+li input:checked::before{background:var(--box);border-color:var(--box)}
+li input:checked::after{content:"";position:absolute;left:18px;top:14px;width:5px;height:10px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg)}
+li input:focus-visible::before{outline:2px solid var(--fg);outline-offset:2px}
+label.t{flex:1;min-height:44px;cursor:pointer;padding-bottom:10px}
+.title{font-size:16.5px;font-weight:500;line-height:1.3}
+.sub{font-size:13.5px;color:var(--muted);margin-top:3px;line-height:1.4}
+.sub .over{color:var(--over)}.sub .today{color:var(--fg)}
+li.done .title{text-decoration:line-through;color:var(--muted)}
+.row,details summary{display:flex;align-items:center;gap:14px;min-height:48px;color:var(--fg);text-decoration:none;font-size:16px;cursor:pointer;list-style:none}
+details summary::-webkit-details-marker{display:none}
+.row svg,summary svg{flex:0 0 20px;width:20px;height:20px;color:var(--box)}
+.row .n,summary .n{margin-left:auto;color:var(--muted);font-size:14px}
+.chev{flex:0 0 14px!important;width:14px!important;height:14px!important;color:var(--chev)!important;transition:transform .15s}
+details[open] summary .chev{transform:rotate(90deg)}
+details ul{padding-top:4px}
+h3{font-size:17px;font-weight:600;margin:34px 0 4px}
+footer{height:40px}
+#lock{padding-top:28px}.locked .meta,.locked .bar{display:none}
+#lock h2{font-size:20px;font-weight:600;margin:0 0 6px}
+#lockinfo{color:var(--muted);font-size:15px;margin:0 0 22px}
+#lock input{width:100%;min-height:52px;font:inherit;font-size:18px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+#lock input:focus{outline:none;border-color:var(--muted)}
+#lock button{margin-top:12px;width:100%;min-height:50px;font:inherit;font-size:17px;font-weight:600;border:0;border-radius:12px;background:var(--btnbg);color:var(--btnfg);cursor:pointer}
+#lock button:disabled{opacity:.5}
+#lockerr{color:var(--over);font-size:15px;margin-top:14px}
+</style>
+</head><body>
+<div class="col">
+<header id="hdr"><div class="top"><h1>Checklist</h1>
+<div class="menuwrap"><button id="menubtn" aria-label="Menu" aria-haspopup="true" aria-expanded="false">•••</button>
+<div id="menu" role="menu" hidden>
+<button id="refresh" role="menuitem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5"/></svg>Refresh</button>
+<hr><div class="lbl">Appearance</div>
+<button role="menuitemradio" data-theme="system" aria-checked="true">System</button>
+<button role="menuitemradio" data-theme="light" aria-checked="false">Light</button>
+<button role="menuitemradio" data-theme="dark" aria-checked="false">Dark</button>
+<hr id="forgethr" hidden>
+<button id="forget" role="menuitem" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg>Forget passphrase</button>
+</div></div></div>
+<div class="meta"><span id="progress">0 of 0 done</span> · <span id="updated">Loading…</span></div><div class="bar"><i id="pbar"></i></div>
+<div id="example" hidden>Example data — not real tasks</div>
+<div id="msg" hidden></div></header>
+<form id="lock" hidden autocomplete="on">
+<h2>Enter passphrase</h2>
+<div id="lockinfo">Your tasks are encrypted. The passphrase stays on this device.</div>
+<input type="text" name="username" value="checklist" autocomplete="username" hidden>
+<input id="pass" type="password" autocomplete="current-password" aria-label="Passphrase" placeholder="Passphrase" required>
+<button id="unlock" type="submit">Unlock</button>
+<div id="lockerr" role="alert" hidden></div>
+</form>
+<main id="list"></main>
+<footer></footer>
+</div>
+<script src="app.js"></script>
+</body></html>
